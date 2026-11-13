@@ -82,6 +82,81 @@ them once. This repo already includes an auto-build file
    `https://<your-username>.github.io/<repo-name>/`
 5. Share that link on WhatsApp with everyone! 💛
 
+### 🆘 Blank page / site looks "unresponsive"? (read this first)
+
+This almost always means Pages is serving the **raw source files** instead of
+the **built site**. Fix it in 1 minute:
+
+1. In your repo go to **Settings → Pages → Build and deployment**.
+2. **Source MUST be `GitHub Actions`** — NOT "Deploy from a branch".
+   (Branch mode serves `index.html` pointing at `/src/main.tsx`, which
+   browsers cannot run → blank, dead page. Actions mode builds the real site.)
+3. Go to the **Actions** tab → **Deploy Wedding Invitation to GitHub Pages**
+   → **Run workflow** → wait for the green ✅ (~2 min).
+4. **Hard-refresh the site!** Browsers cache the old blank page: on your
+   phone, close the tab completely and reopen the link (or try an
+   Incognito/Private tab).
+
+**Actions tab shows no workflows?** → the file
+`.github/workflows/deploy.yml` is missing from your repo (the `.github` folder
+is hidden on some computers, so it may not have uploaded). Fix it manually:
+in your repo click **Add file → Create new file**, name it exactly
+`.github/workflows/deploy.yml`, paste the block below, and commit:
+
+```yaml
+name: Deploy Wedding Invitation to GitHub Pages
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+**Actions run shows red ❌?** → click it → open the failed step → read the
+error message. Then just press **Re-run jobs**. If it keeps failing, check
+that `package.json` and `vite.config.ts` were uploaded unchanged.
+
 > Every time you change photos/text/music and push again, the site
 > re-builds and updates itself in ~2 minutes. Nothing else to do.
 

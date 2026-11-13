@@ -8,3 +8,6 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </StrictMode>
 );
+
+// Tell the loading veil in index.html that the app has started.
+document.getElementById("root")!.dataset.mounted = "true";

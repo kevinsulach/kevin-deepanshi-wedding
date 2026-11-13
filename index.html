@@ -24,9 +24,97 @@
       rel="stylesheet"
     />
     <title>Kevin &amp; Deepanshi · A Royal Wedding Invitation</title>
+    <style>
+      /* Instant loading veil — visible before React mounts, replaced automatically */
+      #invite-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        background: radial-gradient(circle at 50% 38%, #1b3b2b 0%, #0b1710 72%);
+        font-family: Georgia, "Times New Roman", serif;
+      }
+      #invite-loader .loader-ring {
+        width: 74px;
+        height: 74px;
+        border: 1px solid rgba(212, 175, 55, 0.8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d4af37;
+        font-style: italic;
+        font-size: 22px;
+        animation: loader-pulse 2.2s ease-in-out infinite;
+      }
+      #invite-loader .loader-text {
+        color: #faf6f0;
+        font-style: italic;
+        font-size: 17px;
+        letter-spacing: 0.04em;
+        opacity: 0.9;
+      }
+      #invite-loader .loader-bar {
+        width: 120px;
+        height: 1px;
+        background: rgba(212, 175, 55, 0.25);
+        overflow: hidden;
+        position: relative;
+      }
+      #invite-loader .loader-bar::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -40%;
+        width: 40%;
+        height: 100%;
+        background: #d4af37;
+        animation: loader-slide 1.6s ease-in-out infinite;
+      }
+      #invite-loader-note {
+        max-width: 300px;
+        margin: 0;
+        padding: 0 24px;
+        text-align: center;
+        color: rgba(250, 246, 240, 0.78);
+        font-style: italic;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      @keyframes loader-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.75; }
+        50% { transform: scale(1.06); opacity: 1; }
+      }
+      @keyframes loader-slide {
+        to { left: 100%; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="invite-loader">
+        <div class="loader-ring">K·D</div>
+        <div class="loader-text">Opening your invitation…</div>
+        <div class="loader-bar"></div>
+        <p id="invite-loader-note" hidden>
+          Taking longer than usual… the invitation may still be publishing.
+          Please refresh this page in a minute or two.
+        </p>
+      </div>
+    </div>
+    <script>
+      // Safety net: if the app never starts (e.g. the site was not published
+      // correctly yet), show a gentle note instead of a blank page forever.
+      setTimeout(function () {
+        var root = document.getElementById("root");
+        var note = document.getElementById("invite-loader-note");
+        if (root && !root.dataset.mounted && note) note.hidden = false;
+      }, 12000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
