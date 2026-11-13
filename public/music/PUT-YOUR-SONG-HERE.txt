@@ -1,0 +1,19 @@
+TO USE YOUR OWN MUSIC:
+
+1. Drop your song here, e.g.  public/music/wedding.mp3
+   (mp3 format works best on both Android + iPhone)
+
+2. Open src/config.ts and change:
+
+     musicUrl: null
+
+   to:
+
+     musicUrl: "./music/wedding.mp3"
+
+3. Push to GitHub — the site rebuilds automatically.
+
+Leave musicUrl as null to keep the built-in soft instrumental
+(no file needed, plays instantly, no copyright issues).
+
+You can delete this .txt file — it is only instructions.
